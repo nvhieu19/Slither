@@ -26,8 +26,14 @@ print(f'OK Snake spawn geometry - dist to seg 20: {d_head_to_seg20:.1f}px')
 # Test tick: kiểm tra rắn sống sót qua tick đầu và 50 ticks liên tiếp
 for tick_i in range(50):
     events = room.tick()
-    assert snake.alive, f"Snake died unexpectedly on tick {tick_i+1} due to self-collision!"
-print('OK Game tick survival - 50 ticks passed without self-collision')
+    assert snake.alive, f"Snake died unexpectedly on tick {tick_i+1}!"
+
+# Test quay đầu đâm vào thân mình: rắn không được phép chết vì thân của chính nó
+snake.target_angle = snake.angle + 3.14159
+for _ in range(20):
+    room.tick()
+assert snake.alive, "Rắn không được phép tự chết khi chạm vào thân chính mình!"
+print('OK Game tick survival - rắn không bị tự chết khi chạm vào thân mình')
 
 # World state
 ws = room.get_world_state()

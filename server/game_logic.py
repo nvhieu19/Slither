@@ -279,21 +279,17 @@ class GameRoom:
                 self._kill_snake(snake, killer_id=None, events=events)
                 continue
 
-            # Va chạm thân rắn khác (và thân mình)
+            # Va chạm thân rắn khác (chuẩn cơ chế Slither.io: không tự chết khi chạm vào thân mình)
             for other in alive_snakes:
                 if other.player_id == snake.player_id:
-                    # Kiểm tra đầu đâm vào thân mình (bỏ qua N đốt đầu)
-                    skip = 20
-                    check_segments = other.history[skip:]
-                else:
-                    check_segments = other.history
+                    continue  # Bỏ qua thân của chính mình
 
-                for seg_x, seg_y in check_segments:
+                for seg_x, seg_y in other.history:
                     dist = math.hypot(snake.x - seg_x, snake.y - seg_y)
                     if dist < GameConfig.SNAKE_RADIUS + GameConfig.SNAKE_RADIUS * 0.7:
-                        killer_id = other.player_id if other.player_id != snake.player_id else None
+                        killer_id = other.player_id
                         self._kill_snake(snake, killer_id=killer_id, events=events)
-                        if killer_id and killer_id in self.snakes:
+                        if killer_id in self.snakes:
                             self.snakes[killer_id].kills += 1
                         break
                 else:
